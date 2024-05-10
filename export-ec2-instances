@@ -1,0 +1,43 @@
+import os
+
+import boto3
+import openpyxl
+
+# Create an EC2 client
+ec2 = boto3.client("ec2", region_name=os.environ["AWS_DEFAULT_REGION"])
+
+# Call the DescribeInstances API
+response = ec2.describe_instances()
+
+# Create a new Excel workbook and worksheet
+workbook = openpyxl.Workbook()
+worksheet = workbook.active
+
+# Write the header row
+worksheet["A1"] = "Name"
+worksheet["B1"] = "Instance ID"
+worksheet["C1"] = "Instance Type"
+worksheet["D1"] = "Availability Zone"
+worksheet["E1"] = "Private IP Address"
+worksheet["F1"] = "Platform"
+
+# Iterate through the instances and write the data to the worksheet
+row = 2
+for reservation in response["Reservations"]:
+    for instance in reservation["Instances"]:
+        tags = instance["Tags"]
+        for tag in tags:
+            if tag["Key"] == "Name":
+                worksheet.cell(row, column=1, value=tag["Value"])
+                break
+        worksheet.cell(row, column=2, value=instance["InstanceId"])
+        worksheet.cell(row, column=3, value=instance["InstanceType"])
+        worksheet.cell(
+            row=row, column=4, value=instance["Placement"]["AvailabilityZone"]
+        )
+        worksheet.cell(row=row, column=5, value=instance["PrivateIpAddress"])
+        worksheet.cell(row=row, column=6, value=instance["PlatformDetails"])
+        row += 1
+
+# Save the Excel file
+workbook.save("ec2_instances.xlsx")
