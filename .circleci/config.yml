@@ -10,6 +10,7 @@ jobs:
           profile-name: "WEB-IDENTITY-PROFILE"
           role-arn: "arn:aws:iam::100682289518:role/circleci-role2"
           role-session-name: example-session
+          aws-region: ap-southeast-1
       - run:
           name: List-ECR-Repositories
           command: |
