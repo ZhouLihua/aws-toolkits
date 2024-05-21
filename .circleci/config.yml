@@ -1,28 +1,21 @@
-version: 2.1
-
+version: '2.1'
 orbs:
-  aws-cli: circleci/aws-cli@3.1.5
-
+  aws-cli: circleci/aws-cli@3.1
 jobs:
-  aws-example:
-    executor:
-      name: aws-cli/default
+  aws-cli-example:
+    executor: aws-cli/default
     steps:
       - checkout
       - aws-cli/setup:
+          profile-name: "WEB-IDENTITY-PROFILE"
           role-arn: "arn:aws:iam::100682289518:role/circleci-role2"
-          aws-region: ap-southeast-1
-          # optional parameters
-          profile-name: "OIDC-PROFILE"
-          role-session-name: "example-session"
-          session-duration: "1800"
+          role-session-name: example-session
       - run:
-        name: Log-into-AWS-ECR
-        command: |
-          # must use same profile specified in the step above
-          aws ecr get-login-password --profile "OIDC-PROFILE"
+          name: List-ECR-Repositories
+          command: |
+            aws ecr describe-repositories
 workflows:
-  OIDC-with-AWS:
+  aws-cli:
     jobs:
-      - aws-example:
+      - aws-cli-example:
           context: aws
