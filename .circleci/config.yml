@@ -5,8 +5,8 @@ orbs:
 
 jobs:
   aws-example:
-    environment:
-      AWS_REGION: ap-southeast-1
+   environment:
+      AWS_REGION: us-west-1
     docker:
       - image: cimg/aws:2022.06
     steps:
