@@ -5,7 +5,7 @@ orbs:
 
 jobs:
   aws-example:
-   environment:
+    environment:
       AWS_REGION: ap-southeast-1
     docker:
       - image: cimg/aws:2022.06
