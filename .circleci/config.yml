@@ -5,16 +5,13 @@ orbs:
 
 jobs:
   aws-example:
-   environment:
-      AWS_REGION: us-west-1
-    docker:
-      - image: cimg/aws:2022.06
+    executor:
+      name: aws-cli/default
     steps:
       - checkout
-      # run the aws-cli/setup command from the orb
       - aws-cli/setup:
           role-arn: "arn:aws:iam::100682289518:role/circleci-role2"
-          aws-region: AWS_REGION
+          aws-region: ap-southeast-1
           # optional parameters
           profile-name: "OIDC-PROFILE"
           role-session-name: "example-session"
