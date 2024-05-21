@@ -1,34 +1,31 @@
-# This config was automatically generated from your source code
-# Stacks detected: deps:python:.
 version: 2.1
+
 orbs:
-  python: circleci/python@2
+  aws-cli: circleci/aws-cli@3.1.5
+
 jobs:
-  test-python:
-    # Install dependencies and run tests
+  aws-example:
+   environment:
+      AWS_REGION: ap-southeast-1
     docker:
-      - image: cimg/python:3.8-node
+      - image: cimg/aws:2022.06
     steps:
       - checkout
-      - python/install-packages
+      # run the aws-cli/setup command from the orb
+      - aws-cli/setup:
+          role-arn: "arn:aws:iam::100682289518:role/circleci-role2"
+          aws-region: AWS_REGION
+          # optional parameters
+          profile-name: "OIDC-PROFILE"
+          role-session-name: "example-session"
+          session-duration: "1800"
       - run:
-          name: Run tests
-          command: pytest --junitxml=junit.xml || ((($? == 5)) && echo 'Did not find any tests to run.')
-      - store_test_results:
-          path: junit.xml
-  deploy:
-    # This is an example deploy job, not actually used by the workflow
-    docker:
-      - image: cimg/base:stable
-    steps:
-      # Replace this with steps to deploy to users
-      - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
+        name: Log-into-AWS-ECR
+        command: |
+          # must use same profile specified in the step above
+          aws ecr get-login-password --profile "OIDC-PROFILE"
 workflows:
-  build-and-test:
+  OIDC-with-AWS:
     jobs:
-      - test-python
-    # - deploy:
-    #     requires:
-    #       - test-python
+      - aws-example:
+          context: aws
