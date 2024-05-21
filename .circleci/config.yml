@@ -17,7 +17,10 @@ jobs:
       - run:
           name: List-ECR-Repositories
           command: |
-             aws ecr get-login-password --profile "OIDC-PROFILE"
+            echo "list ecr repositories"
+             aws ecr get-login-password --profile "WEB-IDENTITY-PROFILE"
+             echo "list s3 buckets"
+             aws s3 ls
 workflows:
   aws-cli:
     jobs:
